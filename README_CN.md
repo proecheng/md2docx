@@ -31,7 +31,7 @@ pip install python-docx lxml latex2mathml
 ### 方式三：克隆仓库
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/md2docx.git
+git clone https://github.com/proecheng/md2docx.git
 cd md2docx
 pip install -r requirements.txt
 python md2docx.py

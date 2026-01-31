@@ -31,7 +31,7 @@ Then download `md2docx.py` and run it directly.
 ### Option 3: Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/md2docx.git
+git clone https://github.com/proecheng/md2docx.git
 cd md2docx
 pip install -r requirements.txt
 python md2docx.py

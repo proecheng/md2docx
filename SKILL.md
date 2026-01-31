@@ -116,7 +116,7 @@ The momentum is given by $p = mv$, where $m$ is mass and $v$ is velocity.
 
 ## Repository
 
-https://github.com/YOUR_USERNAME/md2docx
+https://github.com/proecheng/md2docx
 
 ## License
 
