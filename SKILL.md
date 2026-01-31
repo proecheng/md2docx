@@ -98,6 +98,26 @@ lxml>=4.9.0
 latex2mathml>=3.0.0
 ```
 
+## Building Standalone Executables
+
+When packaging with PyInstaller, you **must** include the `latex2mathml` data file:
+
+### Windows
+```batch
+for /f "delims=" %%i in ('python -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))"') do set LATEX2MATHML_PATH=%%i
+pyinstaller --onefile --windowed --name "MD2DOCX" --add-data "%LATEX2MATHML_PATH%\unimathsymbols.txt;latex2mathml" md2docx.py
+```
+
+### macOS
+```bash
+LATEX2MATHML_PATH=$(python3 -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))")
+pyinstaller --onefile --windowed --name "MD2DOCX" \
+    --add-data "${LATEX2MATHML_PATH}/unimathsymbols.txt:latex2mathml" \
+    md2docx.py
+```
+
+**Important:** Without this data file, formula conversion will silently fail. The `--add-data` separator is `;` on Windows and `:` on macOS.
+
 ## Example
 
 **Input (Markdown):**
