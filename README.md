@@ -16,9 +16,13 @@ Convert Markdown documents to Word (.docx) with all mathematical formulas conver
 
 ## Installation
 
-### Option 1: Download Pre-built EXE (Windows)
+### Option 1: Download Pre-built Application
 
-Download `MD2DOCX.exe` from the [Releases](../../releases) page. No installation required.
+Download from the [Releases](../../releases) page:
+- **Windows**: `MD2DOCX.exe` - Double-click to run
+- **macOS**: `MD2DOCX-Mac.zip` - Unzip and drag `MD2DOCX.app` to Applications
+
+No Python installation required.
 
 ### Option 2: Install via pip
 
@@ -134,14 +138,28 @@ Microsoft provides `MML2OMML.xsl` for MathML→OMML conversion, but it requires 
 | `mfenced` | Parentheses | `m:d` |
 | `mtable` | Matrix/Table | `m:m` |
 
-## Build EXE from Source
+## Build from Source
 
+### Windows
 ```bash
 pip install pyinstaller
 pyinstaller --onefile --windowed --name "MD2DOCX" md2docx.py
 ```
 
-The executable will be in the `dist/` folder.
+### macOS
+```bash
+pip3 install pyinstaller
+# or run:
+chmod +x build_mac.sh && ./build_mac.sh
+```
+
+The output will be in the `dist/` folder.
+
+Alternatively, push a version tag to trigger the [GitHub Actions workflow](.github/workflows/build.yml) which builds for both platforms automatically:
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
 
 ## Dependencies
 

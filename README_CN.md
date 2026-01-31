@@ -16,9 +16,13 @@
 
 ## 安装方式
 
-### 方式一：下载预编译 EXE（Windows 推荐）
+### 方式一：下载预编译应用
 
-从 [Releases](../../releases) 页面下载 `MD2DOCX.exe`，无需安装，双击即可使用。
+从 [Releases](../../releases) 页面下载：
+- **Windows**: `MD2DOCX.exe` - 双击运行
+- **macOS**: `MD2DOCX-Mac.zip` - 解压后将 `MD2DOCX.app` 拖入"应用程序"文件夹
+
+无需安装 Python。
 
 ### 方式二：pip 安装依赖
 
@@ -134,14 +138,28 @@ Word (.docx) 原生公式编辑器格式
 | `mfenced` | 括号 | `m:d` |
 | `mtable` | 矩阵/表格 | `m:m` |
 
-## 从源码构建 EXE
+## 从源码构建
 
+### Windows
 ```bash
 pip install pyinstaller
 pyinstaller --onefile --windowed --name "MD2DOCX" md2docx.py
 ```
 
-生成的可执行文件在 `dist/` 目录下。
+### macOS
+```bash
+pip3 install pyinstaller
+# 或运行:
+chmod +x build_mac.sh && ./build_mac.sh
+```
+
+生成的应用在 `dist/` 目录下。
+
+也可以推送版本标签触发 [GitHub Actions](.github/workflows/build.yml) 自动构建双平台版本：
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
 
 ## 依赖项
 

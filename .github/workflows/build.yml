@@ -1,0 +1,103 @@
+name: Build Releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install python-docx lxml latex2mathml pyinstaller
+
+      - name: Build Windows EXE
+        run: |
+          pyinstaller --onefile --windowed --name "MD2DOCX" md2docx.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MD2DOCX-Windows
+          path: dist/MD2DOCX.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install python-docx lxml latex2mathml pyinstaller
+
+      - name: Build Mac Application
+        run: |
+          pyinstaller --onefile --windowed --name "MD2DOCX" \
+            --osx-bundle-identifier "com.proecheng.md2docx" \
+            md2docx.py
+
+      - name: Create DMG
+        run: |
+          # Create a simple zip of the app for distribution
+          cd dist
+          zip -r MD2DOCX-Mac.zip MD2DOCX.app
+
+      - name: Upload Mac artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MD2DOCX-Mac
+          path: dist/MD2DOCX-Mac.zip
+
+  create-release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/MD2DOCX-Windows/MD2DOCX.exe
+            artifacts/MD2DOCX-Mac/MD2DOCX-Mac.zip
+          body: |
+            ## MD2DOCX - Markdown to Word Converter
+
+            Convert Markdown documents to Word (.docx) with LaTeX formulas converted to native equation editor format (OMML).
+
+            ### Downloads
+            - **MD2DOCX.exe** - Windows executable (no Python required)
+            - **MD2DOCX-Mac.zip** - macOS application (unzip and drag to Applications)
+
+            ### Features
+            - Block formulas ($$...$$) and inline formulas ($...$)
+            - Auto-detect mathematical expressions (Greek letters, subscripts)
+            - Chinese document support (SimSun/SimHei fonts)
+
+            ### Usage
+            1. Double-click to open file selection dialog
+            2. Drag .md file onto the application icon
+            3. Command line: `MD2DOCX document.md`
+
+            See [README](https://github.com/proecheng/md2docx#readme) for full documentation.
