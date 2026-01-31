@@ -22,17 +22,21 @@ fi
 echo "Installing dependencies..."
 pip3 install python-docx lxml latex2mathml pyinstaller
 
+# Get latex2mathml data file path
+LATEX2MATHML_PATH=$(python3 -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))")
+
 echo
 echo "Building Mac application..."
 echo
 
 pyinstaller --onefile --windowed --name "MD2DOCX" \
     --osx-bundle-identifier "com.proecheng.md2docx" \
+    --add-data "${LATEX2MATHML_PATH}/unimathsymbols.txt:latex2mathml" \
     md2docx.py
 
 echo
 echo "==============================================="
-if [ -f "dist/MD2DOCX.app" ] || [ -d "dist/MD2DOCX.app" ]; then
+if [ -d "dist/MD2DOCX.app" ]; then
     echo "Build successful!"
     echo
     echo "Application location: dist/MD2DOCX.app"

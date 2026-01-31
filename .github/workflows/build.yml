@@ -21,9 +21,16 @@ jobs:
         run: |
           pip install python-docx lxml latex2mathml pyinstaller
 
+      - name: Get latex2mathml path
+        id: latex2mathml
+        shell: pwsh
+        run: |
+          $path = python -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))"
+          echo "path=$path" >> $env:GITHUB_OUTPUT
+
       - name: Build Windows EXE
         run: |
-          pyinstaller --onefile --windowed --name "MD2DOCX" md2docx.py
+          pyinstaller --onefile --windowed --name "MD2DOCX" --add-data "${{ steps.latex2mathml.outputs.path }}\unimathsymbols.txt;latex2mathml" md2docx.py
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -45,15 +52,21 @@ jobs:
         run: |
           pip install python-docx lxml latex2mathml pyinstaller
 
+      - name: Get latex2mathml path
+        id: latex2mathml
+        run: |
+          path=$(python -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))")
+          echo "path=$path" >> $GITHUB_OUTPUT
+
       - name: Build Mac Application
         run: |
           pyinstaller --onefile --windowed --name "MD2DOCX" \
             --osx-bundle-identifier "com.proecheng.md2docx" \
+            --add-data "${{ steps.latex2mathml.outputs.path }}/unimathsymbols.txt:latex2mathml" \
             md2docx.py
 
-      - name: Create DMG
+      - name: Create ZIP
         run: |
-          # Create a simple zip of the app for distribution
           cd dist
           zip -r MD2DOCX-Mac.zip MD2DOCX.app
 

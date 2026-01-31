@@ -748,8 +748,11 @@ def show_result(success, message):
 
 def main():
     """主入口"""
+    # 判断是否命令行模式
+    cli_mode = len(sys.argv) > 1
+
     # 获取输入文件
-    if len(sys.argv) > 1:
+    if cli_mode:
         input_file = sys.argv[1]
     else:
         input_file = select_file()
@@ -758,19 +761,33 @@ def main():
 
     # 检查文件
     if not input_file.lower().endswith('.md'):
-        show_result(False, "请选择.md文件!")
+        if cli_mode:
+            print("错误: 请选择.md文件!")
+        else:
+            show_result(False, "请选择.md文件!")
         return
 
     if not os.path.exists(input_file):
-        show_result(False, f"文件不存在: {input_file}")
+        if cli_mode:
+            print(f"错误: 文件不存在: {input_file}")
+        else:
+            show_result(False, f"文件不存在: {input_file}")
         return
 
     try:
         stats, output_file = convert_md_to_docx(input_file)
-        msg = f"转换成功!\n\n输出文件: {output_file}\n\n独立公式: {stats['block']}\n行内公式: {stats['inline']}\n总计: {stats['block'] + stats['inline']}"
-        show_result(True, msg)
+        msg = f"转换成功!\n输出文件: {output_file}\n独立公式: {stats['block']}\n行内公式: {stats['inline']}\n总计: {stats['block'] + stats['inline']}"
+        if cli_mode:
+            print(msg)
+        else:
+            show_result(True, msg)
     except Exception as e:
-        show_result(False, f"转换出错:\n{str(e)}")
+        if cli_mode:
+            print(f"转换出错: {str(e)}")
+            import traceback
+            traceback.print_exc()
+        else:
+            show_result(False, f"转换出错:\n{str(e)}")
 
 if __name__ == '__main__':
     main()

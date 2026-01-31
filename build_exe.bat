@@ -12,11 +12,14 @@ if errorlevel 1 (
     pip install pyinstaller
 )
 
+REM Get latex2mathml data file path
+for /f "delims=" %%i in ('python -c "import latex2mathml; import os; print(os.path.dirname(latex2mathml.__file__))"') do set LATEX2MATHML_PATH=%%i
+
 echo.
 echo Building...
 echo.
 
-pyinstaller --onefile --windowed --name "MD2DOCX" md2docx.py
+pyinstaller --onefile --windowed --name "MD2DOCX" --add-data "%LATEX2MATHML_PATH%\unimathsymbols.txt;latex2mathml" md2docx.py
 
 echo.
 echo ===============================================
